@@ -4,7 +4,15 @@ class SearchesController < Spree::BaseController
 
   def test
   end
-
+  
+  def filter_price
+    @search = Search.new
+    @search.taxon_id = params[:taxon_id] if params[:taxon_id].to_i > 0
+    @search.keywords = params[:keywords]
+    @search.subtaxons = true 
+    render :layout => false if request.xhr?  
+  end
+  
   
   # Create a search object to receive parameters of the form to validate.
   def new

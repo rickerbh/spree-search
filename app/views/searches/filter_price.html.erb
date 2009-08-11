@@ -1,0 +1,32 @@
+<% content_for :sidebar do %>
+  <td id="shop-by-col" valign="top">
+  	<%= render :partial => "shared/taxonomies" %>
+  </td>
+<% end %>
+
+<%= error_messages_for :search %>
+
+<% form_for @search do |f| %>
+  <p>
+    <%= f.hidden_field :keywords %>
+    <%= f.hidden_field :taxon_id %>
+    <%= f.hidden_field :subtaxons %>
+  </p>
+  <p>
+    <%= t('ext.search.minimum_price') %>:<br/>
+    <%= f.text_field :min_price %>
+  </p>
+  <p>
+    <%= t('ext.search.maximum_price') %>:<br/>
+    <%= f.text_field :max_price %>
+  </p>
+  <p>
+    <%= t('ext.search.sort_type') %>:<br/>
+    <select name="sort_type" id="sort_type" >
+      <option value="">Не сортировать</option>
+      <option value="price_asc">По возрастанию</option>
+      <option value="price_desc">По убыванию</option>
+    </select>
+  </p>
+  <p><%= f.submit t('ext.search.send') %></p>
+<% end %>
