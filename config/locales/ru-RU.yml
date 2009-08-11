@@ -1,0 +1,23 @@
+ru-RU:
+  ext:
+    search:
+      extension_name: Поиск и сортировка
+      extension_description: Добавляет поддержку поиска и сортировки продуктов
+
+      advanced_product_search: Расширенный поиск продуктов
+      advanced: Расширенный
+      any_classification: Любая классификация
+      asc: по возрастанию
+      belonging_to: Относится к
+      desc: по убыванию
+      include_subtaxons: Включать вложенные классификации в поиск
+      keywords: Ключевые слова
+      maximum_price: Максимальная цена
+      minimum_price: Минимальная цена
+      search: Поиск
+      searching_by: Найдено для '{{search_term}}'
+      send: Искать
+      sort_by: Сортировать по
+      sort_type: Порядок сортировки
+      date: Дата поступления в продажу
+      no: ''
