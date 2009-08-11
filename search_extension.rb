@@ -7,7 +7,6 @@ class SearchExtension < Spree::Extension
   url "http://github.com/edmundo/spree-search/tree/master"
 
   def activate
-    
 #    # Add pagination support for the find_by_sql method inside paginating_find plugin.
 #    PaginatingFind::ClassMethods.class_eval do
 #      def paginating_sql_find(count_query, query, options)
