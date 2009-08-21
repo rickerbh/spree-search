@@ -7,32 +7,47 @@ class SearchExtension < Spree::Extension
   url "http://github.com/edmundo/spree-search/tree/master"
 
   def activate
-#    # Add pagination support for the find_by_sql method inside paginating_find plugin.
-#    PaginatingFind::ClassMethods.class_eval do
-#      def paginating_sql_find(count_query, query, options)
-#
-#        # The current page defaults to 1 when not passed.
-#        options[:current] ||= "1"
-#
-#        count_query = sanitize_sql(count_query)
-#        query = sanitize_sql(query)
-#
-#        # execute the count query - need to know how many records we're looking at
-#        count = count_by_sql(count_query)
-#
-#        PagingEnumerator.new(options[:page_size], count, false, options[:current], 1) do |page|
-#          # calculate the right offset values for current page and page_size
-#            offset = (options[:current].to_i - 1) * options[:page_size]
-#            limit = options[:page_size]
-#
-#            # run the actual query - Note: do not include LIMIT statement in your query
-#          find_by_sql(query + " LIMIT #{offset},#{limit}")
-#        end
-#      end
-#    end
+    ProductsController.class_eval do
+      private
+      def collection
+        # Define what is allowed.
+        sort_params = {
+          "price_asc" => ["master_price", "asc"],
+          "price_desc" => ["master_price", "desc"],
+          "date_asc" => ["available_on", "asc"],
+          "date_desc" => ["available_on", "desc"],
+          "name_asc" => ["name", "asc"],
+          "name_desc" => ["name", "desc"]
+        }
+        # Set it to what is allowed or default.
+        @sort_by_and_as = sort_params[params[:sort]] || false
+        @search_param = "- #{t('ext.search.searching_by', :search_term => params[:keywords])}" if params[:keywords]
+        query = params[:keywords]
+        if params[:taxon]
+          @taxon = Taxon.find(params[:taxon])
+          @search = Product.active.scoped(:conditions =>
+                                            ["products.name LIKE ? OR products.description LIKE ?
+                                              products.id in (select product_id from products_taxons where taxon_id in (" +
+                                              @taxon.descendents.inject( @taxon.id.to_s) { |clause, t| clause += ', ' + t.id.to_s} + "))",
+                                              "%#{query}%", "%#{query}%"
+                                            ]).search(params[:search])
+        else
+          @search = Product.active.scoped(:conditions =>
+                                            ["products.name LIKE ? OR products.description LIKE ?",
+                                              "%#{query}%", "%#{query}%"
+                                            ]).search(params[:search])
+        end
+        @search = @search.send "#{@sort_by_and_as[1]}end_by_#{@sort_by_and_as[0]}" if @sort_by_and_as
+        @products_count = @search.count
+        @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
+                                       :per_page => params[:per_page] || Spree::Config[:products_per_page],
+                                       :page     => params[:page])
+      end
+    end
   end
-  
+
   def self.require_gems(config)
     config.gem 'activerecord-tableless', :lib => 'tableless'
   end
 end
+
