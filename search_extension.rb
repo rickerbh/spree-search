@@ -4,7 +4,7 @@ require_dependency 'application'
 class SearchExtension < Spree::Extension
   version "0.99"
   description "Search and sort extension for spree."
-  url "http://github.com/edmundo/spree-search/tree/master"
+  url "http://github.com/romul/spree-search/tree/master"
 
   def activate
     ProductsController.class_eval do

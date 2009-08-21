@@ -1,9 +1,10 @@
 # Search
 
 This is an extension that adds sort and search support for products inside Spree.
+This extension works on edge-version of Spree.
 
 ## Install
-      script/extension install git://github.com/edmundo/spree-search.git
+      script/extension install git://github.com/romul/spree-search.git
 
 You need to uncomment two methods (that builds the products collection) on products_controller.rb and taxons_controller.rb to make simple search work.
 
@@ -23,9 +24,6 @@ It has basic sort support for products, by default the only view that has it wor
 
 ## gems needed
 activerecord-tableless
-
-## Code inside app to be mixed
-I'm not using code inside the `..._extension.rb` file using `class_eval` anymore, look at the last commits here `http://github.com/edmundo/spree/tree/app_override` to make the code inside app used in this extension be mixed automatically.
 
 ## Screenshots
 
