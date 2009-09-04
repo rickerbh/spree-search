@@ -12,8 +12,8 @@ class SearchExtension < Spree::Extension
       def collection
         # Define what is allowed.
         sort_params = {
-          "price_asc" => ["master_price", "asc"],
-          "price_desc" => ["master_price", "desc"],
+          "price_asc" => ["variants_price", "asc"],
+          "price_desc" => ["variants_price", "desc"],
           "date_asc" => ["available_on", "asc"],
           "date_desc" => ["available_on", "desc"],
           "name_asc" => ["name", "asc"],
@@ -21,6 +21,7 @@ class SearchExtension < Spree::Extension
         }
         # Set it to what is allowed or default.
         @sort_by_and_as = sort_params[params[:sort]] || false
+
         @search_param = "- #{t('ext.search.searching_by', :search_term => params[:keywords])}" if params[:keywords]
         query = params[:keywords]
         if params[:taxon]
@@ -37,6 +38,7 @@ class SearchExtension < Spree::Extension
                                               "%#{query}%", "%#{query}%"
                                             ]).search(params[:search])
         end
+        
         @search = @search.send "#{@sort_by_and_as[1]}end_by_#{@sort_by_and_as[0]}" if @sort_by_and_as
         @products_count = @search.count
         @products ||= @search.paginate(:include  => [:images, {:variants => :images}],

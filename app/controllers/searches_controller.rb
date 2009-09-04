@@ -41,8 +41,8 @@ class SearchesController < Spree::BaseController
   def show
     # Define what is allowed.
     sort_params = {
-      "price_asc" => ["master_price", "asc"],
-      "price_desc" => ["master_price", "desc"],
+      "price_asc" => ["variants.price", "asc"],
+      "price_desc" => ["variants.price", "desc"],
       "date_asc" => ["available_on", "asc"],
       "date_desc" => ["available_on", "desc"],
       "name_asc" => ["name", "asc"],
