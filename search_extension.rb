@@ -20,26 +20,19 @@ class SearchExtension < Spree::Extension
           "name_desc" => ["name", "desc"]
         }
         # Set it to what is allowed or default.
-        @sort_by_and_as = sort_params[params[:sort]] || false
-
-        @search_param = "- #{t('ext.search.searching_by', :search_term => params[:keywords])}" if params[:keywords]
-        query = params[:keywords]
+        @sort_by_and_as = sort_params[params[:sort]] || sort_params['date_desc']
+               
+        @search = Product.active
+        @search = @search.send "#{@sort_by_and_as[1]}end_by_#{@sort_by_and_as[0]}" if @sort_by_and_as
+        
         if params[:taxon]
-          @taxon = Taxon.find(params[:taxon])
-          @search = Product.active.scoped(:conditions =>
-                                            ["products.name LIKE ? OR products.description LIKE ?
-                                              products.id in (select product_id from products_taxons where taxon_id in (" +
-                                              @taxon.descendents.inject( @taxon.id.to_s) { |clause, t| clause += ', ' + t.id.to_s} + "))",
-                                              "%#{query}%", "%#{query}%"
-                                            ]).search(params[:search])
-        else
-          @search = Product.active.scoped(:conditions =>
-                                            ["products.name LIKE ? OR products.description LIKE ?",
-                                              "%#{query}%", "%#{query}%"
-                                            ]).search(params[:search])
+          @taxon = Taxon.find(params[:taxon])         
+          @search = @search.taxons_id_equals_any(@taxon.descendents.inject([@taxon.id]) { |clause, t| clause << t.id } )                          
         end
         
-        @search = @search.send "#{@sort_by_and_as[1]}end_by_#{@sort_by_and_as[0]}" if @sort_by_and_as
+        query = params[:keywords].to_s.split
+        @search = @search.name_or_description_like_any(query).search(params[:search])
+        
         @products_count = @search.count
         @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
                                        :per_page => params[:per_page] || Spree::Config[:products_per_page],
@@ -50,6 +43,7 @@ class SearchExtension < Spree::Extension
 
   def self.require_gems(config)
     config.gem 'activerecord-tableless', :lib => 'tableless'
+    config.gem 'searchlogic', :version => '>=2.3.3'
   end
 end
 

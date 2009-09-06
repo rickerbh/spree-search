@@ -6,8 +6,6 @@ This extension works on edge-version of Spree.
 ## Install
       script/extension install git://github.com/romul/spree-search.git
 
-You need to uncomment two methods (that builds the products collection) on products_controller.rb and taxons_controller.rb to make simple search work.
-
 ## Actual state
 Production ready. Updated to work with the latest i18n code.
 
@@ -16,14 +14,24 @@ It includes basic name search that is suggested to be putted in the main layout.
 It can be tested using the following route:
 /search/test
 
+
 It includes extended search based on some criteria like name, price and classification it is directly in or below it.
 It can be tested using the following route:
+
 /searches/new
 
 It has basic sort support for products, by default the only view that has it working is the result of the extended search, but it can be included in all the rest of the application including the main view and the view by current taxon.
 
+or test the following route:
+
+/price/filter/0
+
+for only price filtering.
+
+
 ## gems needed
 activerecord-tableless
+searchlogic >= 2.3.3
 
 ## Screenshots
 
