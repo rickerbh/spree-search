@@ -30,8 +30,12 @@ class SearchExtension < Spree::Extension
           @search = @search.taxons_id_equals_any(@taxon.descendents.inject([@taxon.id]) { |clause, t| clause << t.id } )                          
         end
         
-        query = params[:keywords].to_s.split
-        @search = @search.name_or_description_like_any(query).search(params[:search])
+        if (params[:keywords])
+          query = params[:keywords].to_s.split
+          @search = @search.name_or_description_like_any(query)
+        end  
+        
+        @search = @search.search(params[:search])
         
         @products_count = @search.count
         @products ||= @search.paginate(:include  => [:images, {:variants => :images}],
