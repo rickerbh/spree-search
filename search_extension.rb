@@ -30,7 +30,7 @@ class SearchExtension < Spree::Extension
           @search = @search.taxons_id_equals_any(@taxon.descendents.inject([@taxon.id]) { |clause, t| clause << t.id } )                          
         end
         
-        if (params[:keywords])
+        unless params[:keywords].blank?
           query = params[:keywords].to_s.split
           @search = @search.name_or_description_like_any(query)
         end  
